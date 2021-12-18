@@ -1,0 +1,173 @@
+<html>
+<head>
+<script src='web3.min.js'></script>
+<script type="text/javascript" src="abilist.js">  </script>
+<script type="text/javascript">
+
+var accounts = null;
+var contractInstance = null;
+var resultbox = null;
+var g_web3;
+
+
+window.addEventListener('load', async () => {
+
+	if(window.ethereum) {
+		window.alert('Modern dapp browsers')
+	} else if (window.web3) {
+		window.alert('Legacy dapp browsers')
+	} else {
+		window.alert('Non-Ethereum browser detected. You should consider trying Meta Mask!');
+	}
+
+
+	let btn = document.getElementById("id_btn_set_join_the_game");
+	btn.addEventListener('click', set_join_the_game);
+
+	btn = document.getElementById("id_btn_set_pick_the_Winner");
+	btn.addEventListener('click', set_pick_the_Winner);
+
+	btn = document.getElementById("id_btn_get_getPlayers");
+	btn.addEventListener('click', get_getPlayers);
+
+	btn = document.getElementById("id_btn_get_getManager");
+	btn.addEventListener('click', get_getManager);
+
+	btn = document.getElementById("id_btn_get_getPrice");
+	btn.addEventListener('click', get_getPrice);
+
+	resultbox = document.getElementById("resultbox");
+	
+	window.accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+	const showAccount = document.querySelector('.showAccount');
+
+	window.web3 = new Web3(window.ethereum);
+	g_web3 = window.web3;
+
+	contractInstance = await new g_web3.eth.Contract(abiobj, address);
+
+	alert("Load OK!");
+
+});
+
+
+async function set_join_the_game() {
+	if(contractInstance != null) {
+		try
+		{
+
+			let valtxt = document.getElementById("id_text_join_the_game");
+			let val = valtxt.value;
+			let value = await contractInstance.methods.join_the_game().send({from:accounts[0], value:val});
+			resultbox.innerHTML = value;
+
+			alert("판돈 넣고 참가");
+
+		}
+		catch
+		{
+			alert("참가 실패!!!");
+		}
+	}
+}
+
+async function set_pick_the_Winner() {
+	if(contractInstance != null) {
+		try
+		{
+
+			let value = await contractInstance.methods.pick_the_Winner().send({from:accounts[0]});
+			//resultbox.innerHTML = JSON.stringify(value);
+
+			alert("당첨자 추첨 성공");
+
+		}
+		catch
+		{
+			alert("당첨자 추첨 실패!!!");
+		}
+	}
+}
+
+
+async function get_getPlayers() {
+	if(contractInstance != null) {
+		try
+		{
+
+			let value = await contractInstance.methods.getPlayers().call();
+			resultbox.innerHTML = value;
+
+			alert("참가자 리스트 추출 성공");
+
+		}
+		catch
+		{
+			alert("참가자 리스트 추출 실패!!!");
+		}
+	}
+}
+
+async function get_getManager() {
+	if(contractInstance != null) {
+		try
+		{
+
+			let value = await contractInstance.methods.getManager().call();
+			resultbox.innerHTML = value;
+
+			alert("관리자 추출 성공");
+
+		}
+		catch
+		{
+			alert("관리자 추출 실패!!!");
+		}
+	}
+}
+
+async function get_getPrice() {
+	if(contractInstance != null) {
+		try
+		{
+
+			let value = await contractInstance.methods.getPrice().call();
+			resultbox.innerHTML = value;
+
+			alert("상금 추출 성공");
+
+		}
+		catch
+		{
+			alert("상금 추출 실패!!!");
+		}
+	}
+}
+
+</script>
+</head>
+
+<body>
+<h1> Project Name: Lottery (복권 당첨) </h1>
+<h4> Team Name: 서민욱 (K2020504), 소프트웨어 융합대학원 소프트웨어 전공 </h4>
+<br/>
+<a href="https://youtu.be/lYOavT3qHzc"> Project 1 Demo Video </a>
+<br/>
+<br/>
+<br/>
+<input type="button" id="id_btn_set_join_the_game" value="판돈 걸고 참가하기"> 판돈 <input type="text" id="id_text_join_the_game">  Wei
+<br/>
+<input type="button" id="id_btn_set_pick_the_Winner" value="당첨자 추첨 하기">
+<br/>
+<input type="button" id="id_btn_get_getPlayers" value="참가자 리스트 얻기">
+<br/>
+<input type="button" id="id_btn_get_getManager" value="관리자는 누구?">
+<br/>
+<input type="button" id="id_btn_get_getPrice" value="상금은 얼마?">
+<br/>
+<br/>
+Result: <span id="resultbox"> </span>
+
+
+</body>
+</html>
